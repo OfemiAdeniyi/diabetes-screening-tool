@@ -82,3 +82,4 @@ if st.button("🔍 Screen for Diabetes Risk"):
                 st.error(f"API Error: {response.status_code}")
         except requests.exceptions.ConnectionError:
             st.error("❌ Could not connect to the FastAPI server.")
+

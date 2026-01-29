@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-API_URL = "http://127.0.0.1:8000/screen-diabetes"
+API_URL = "https://github.com/OfemiAdeniyi/diabetes-screening-tool/blob/main/main.py"
 
 # -------------------------------
 # Page Setup
@@ -82,4 +82,5 @@ if st.button("🔍 Screen for Diabetes Risk"):
                 st.error(f"API Error: {response.status_code}")
         except requests.exceptions.ConnectionError:
             st.error("❌ Could not connect to the FastAPI server.")
+
 

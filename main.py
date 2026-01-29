@@ -1,17 +1,43 @@
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, computed_field
 from typing import Literal, Annotated
 import pickle
 import pandas as pd
+import requests
+import os
 
-# Load trained screening model
-with open("rf_screening_model.pkl", "rb") as f:
+app = FastAPI()
+
+# ===============================
+# Google Drive direct download URLs
+# ===============================
+MODEL_URL = "https://drive.google.com/uc?id=1o0dPggLeTrdVy7dESmsvP6IDk_Q5SeGF"
+THRESHOLD_URL = "https://drive.google.com/uc?id=1poS0OD5Z6lhl1pfgg1AyG_GmHGEweYu8"
+
+MODEL_PATH = "rf_screening_model.pkl"
+THRESHOLD_PATH = "screening_threshold.pkl"
+
+
+def download_file(url: str, output_path: str):
+    if not os.path.exists(output_path):
+        response = requests.get(url)
+        response.raise_for_status()
+        with open(output_path, "wb") as f:
+            f.write(response.content)
+
+
+# Download files once at startup
+download_file(MODEL_URL, MODEL_PATH)
+download_file(THRESHOLD_URL, THRESHOLD_PATH)
+
+
+# Load model and threshold locally
+with open(MODEL_PATH, "rb") as f:
     model = pickle.load(f)
 
-# Load screening threshold
-with open("screening_threshold.pkl", "rb") as f:
+with open(THRESHOLD_PATH, "rb") as f:
     threshold = pickle.load(f)
+
 
 app = FastAPI()
 
@@ -71,6 +97,7 @@ def Screen_Patient_for_Diabetes(data: DiabetesScreeningInput):
         "screening_result": screening_result,
         "screening_threshold": round(float(threshold), 3)
     }
+
 
 
 
